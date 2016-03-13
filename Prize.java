@@ -1,6 +1,7 @@
 package com.redmart.prize;
 
 import java.io.*;
+import java.util.*;
 
 public class Prize {
 	private final static int OFS_PROD_ID = 0;
@@ -10,9 +11,9 @@ public class Prize {
 	private final static int OFS_HEIGHT = 4;
 	private final static int OFS_WEIGHT = 5;
 	private final static int OFS_VOLUME = 6;
-	private final static int OFS_PRICE_RATION = 7;
+	private final static int OFS_PRICE_RATIO = 7;
 	
-	private final static int PROD_SIZE = 20000;
+	private final static int PROD_SIZE = 5;
 	private final static int BUFF_SIZE = 8;
 	
 	private final static int MAX_LENGTH = 45;
@@ -27,7 +28,7 @@ public class Prize {
 	public static void main(String[] args){
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		for(int i = 0; i < 6; i++){
+		for(int i = 0; i < 5; i++){
 			try{
 				data = br.readLine().split(",");
 				for(int y = 0; y < 6; y++){
@@ -41,7 +42,7 @@ public class Prize {
 					files[i][OFS_VOLUME] = files[i][OFS_LENGTH] * files[i][OFS_WIDTH] *
 						files[i][OFS_HEIGHT];
 					// get the price to volume ratio
-					files[i][OFS_PRICE_RATION] = files[i][OFS_PRICE] / files[i][OFS_VOLUME];
+					files[i][OFS_PRICE_RATIO] = files[i][OFS_PRICE] / files[i][OFS_VOLUME];
 
 				}
 				//if item does not fit into the tote, remove it from the list
@@ -53,13 +54,25 @@ public class Prize {
 			{				
 			}
 		}
+
+		Arrays.sort(files, new Comparator<double[]>() {
+		    public int compare(double[] a, double[] b) {
+		    	//return Double.compare(a[0], b[0]);
+		    	if (a[OFS_PRICE_RATIO] > a[OFS_PRICE_RATIO])
+		            return 1;
+		        else if (a[OFS_PRICE_RATIO] < a[OFS_PRICE_RATIO])
+		            return -1;   
+		        else 
+		            //if the same ratio happen, compare the weight of the item
+		        	return Double.compare(a[OFS_WEIGHT], b[OFS_WEIGHT]);
+		    }
+		});
 		
-		for(int y = 0; y < 6; y++){
+		for(int y = 0; y < 4; y++){
 			for(int z = 0; z < BUFF_SIZE; z++)
 				System.out.print(files[y][z] + " ");
 			System.out.println();
 		}
 
-		
 	}
 }
