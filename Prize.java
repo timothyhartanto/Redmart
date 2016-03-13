@@ -5,38 +5,61 @@ import java.io.*;
 public class Prize {
 	private final static int OFS_PROD_ID = 0;
 	private final static int OFS_PRICE = 1;
-	private final static int OFS_VOLUME = 2;
-	private final static int OFS_WEIGHT = 3;
-	private final static int PROD_SIZE = 20000;
+	private final static int OFS_LENGTH = 2;
+	private final static int OFS_WIDTH = 3;
+	private final static int OFS_HEIGHT = 4;
+	private final static int OFS_WEIGHT = 5;
+	private final static int OFS_VOLUME = 6;
+	private final static int OFS_PRICE_RATION = 7;
 	
-	private static int[][] files = new int[PROD_SIZE][4];
-	//private static String file = "";
+	private final static int PROD_SIZE = 20000;
+	private final static int BUFF_SIZE = 8;
+	
+	private final static int MAX_LENGTH = 45;
+	private final static int MAX_WIDTH = 30;
+	private final static int MAX_HEIGHT = 35;
+	private final static int MAX_VOLUME = MAX_LENGTH * MAX_WIDTH * MAX_HEIGHT;
+	
+	private static double[][] files = new double[PROD_SIZE][BUFF_SIZE];
+	
 	private static String[] data;
 
 	public static void main(String[] args){
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int i = 0, volume = 0;
-		
-		while(i < 6){
+
+		for(int i = 0; i < 6; i++){
 			try{
 				data = br.readLine().split(",");
-					
-					files[i][OFS_PROD_ID] = Integer.parseInt(data[OFS_PROD_ID]);
-					files[i][OFS_PRICE] = Integer.parseInt(data[OFS_PRICE]);
-					volume = (Integer.parseInt(data[OFS_VOLUME]) * Integer.parseInt(data[OFS_VOLUME + 1]) *
-							Integer.parseInt(data[OFS_VOLUME + 2])); // get length, width, height
-					files[i][OFS_VOLUME] = volume;
-					files[i][OFS_WEIGHT] = Integer.parseInt(data[OFS_WEIGHT + 2]); // skip offset width and height
+				for(int y = 0; y < 6; y++){
+					files[i][y] = Double.parseDouble(data[y]);
+				}
+				
+				//if item does fit into the tote, get the volume and the price to volume ration
+				if((files[i][OFS_LENGTH] <= MAX_LENGTH) && (files[i][OFS_WIDTH] <= MAX_WIDTH) &&
+						(files[i][OFS_HEIGHT] <= MAX_HEIGHT)){
+					// get the volume
+					files[i][OFS_VOLUME] = files[i][OFS_LENGTH] * files[i][OFS_WIDTH] *
+						files[i][OFS_HEIGHT];
+					// get the price to volume ratio
+					files[i][OFS_PRICE_RATION] = files[i][OFS_PRICE] / files[i][OFS_VOLUME];
 
-			}catch(Exception e){}
-			i++;
+				}
+				//if item does not fit into the tote, remove it from the list
+				else{
+					files[i] = new double[BUFF_SIZE];
+				}
+			}
+			catch(Exception e)
+			{				
+			}
 		}
 		
 		for(int y = 0; y < 6; y++){
-			for(int z = 0; z < 4; z++)
-				System.out.print(files[y][z]);
+			for(int z = 0; z < BUFF_SIZE; z++)
+				System.out.print(files[y][z] + " ");
 			System.out.println();
 		}
+
 		
 	}
 }
