@@ -13,22 +13,24 @@ public class Prize {
 	private final static int OFS_VOLUME = 6;
 	private final static int OFS_PRICE_RATIO = 7;
 	
-	private final static int PROD_SIZE = 5;
+	private final static int PROD_SIZE = 20000;
 	private final static int BUFF_SIZE = 8;
 	
 	private final static int MAX_LENGTH = 45;
 	private final static int MAX_WIDTH = 30;
 	private final static int MAX_HEIGHT = 35;
-	private final static int MAX_VOLUME = MAX_LENGTH * MAX_WIDTH * MAX_HEIGHT;
+	private static double maxVolume = MAX_LENGTH * MAX_WIDTH * MAX_HEIGHT;
 	
 	private static double[][] files = new double[PROD_SIZE][BUFF_SIZE];
 	
 	private static String[] data;
+	
+	private static int totalID = 0;
 
 	public static void main(String[] args){
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		for(int i = 0; i < 5; i++){
+		for(int i = 0; i < PROD_SIZE; i++){
 			try{
 				data = br.readLine().split(",");
 				for(int y = 0; y < 6; y++){
@@ -55,24 +57,27 @@ public class Prize {
 			}
 		}
 
+		//sort from heaviest to lightest
 		Arrays.sort(files, new Comparator<double[]>() {
 		    public int compare(double[] a, double[] b) {
-		    	//return Double.compare(a[0], b[0]);
-		    	if (a[OFS_PRICE_RATIO] > a[OFS_PRICE_RATIO])
-		            return 1;
-		        else if (a[OFS_PRICE_RATIO] < a[OFS_PRICE_RATIO])
-		            return -1;   
-		        else 
-		            //if the same ratio happen, compare the weight of the item
-		        	return Double.compare(a[OFS_WEIGHT], b[OFS_WEIGHT]);
+		    	return Double.compare(b[OFS_WEIGHT], a[OFS_WEIGHT]);
 		    }
 		});
 		
-		for(int y = 0; y < 4; y++){
-			for(int z = 0; z < BUFF_SIZE; z++)
-				System.out.print(files[y][z] + " ");
-			System.out.println();
+		//sort from the lowest price ratio to highest price ratio
+		Arrays.sort(files, new Comparator<double[]>() {
+		    public int compare(double[] a, double[] b) {
+		    	return Double.compare(a[OFS_PRICE_RATIO], b[OFS_PRICE_RATIO]);
+		    }
+		});
+		
+		for(int x = (PROD_SIZE - 1); x >= 0; x--){
+			if((maxVolume - files[x][OFS_VOLUME]) > 0){
+				maxVolume -= files[x][OFS_VOLUME];
+				totalID += files[x][OFS_PROD_ID]; 
+			}				
 		}
 
+		System.out.println(totalID);
 	}
 }
